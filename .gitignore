@@ -1,0 +1,73 @@
+# Virtual Environment
+venv/
+env/
+ENV/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Data files
+*.pickle
+*.xlsx
+*.model
+*.dat
+
+# Logs
+logs/
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Training data
+ExtractFrams/
+CroppedMouth/
+Videos/
+
+# Model files
+64x3-CNN*.model
+X.pickle
+y.pickle
+
+# Dataset directories
+dataset/Celeb-DF/
+CelebDF_ForTraining/
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+.pytest_cache/
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# TensorBoard
+runs/
+tensorboard_logs/
+
+# Additional model files
+*.h5
+*.pb
+*.ckpt
+
+# Video processing
+*.mp4
+*.avi
+*.mov
+*.mkv
+output_videos/
+
+# Face recognition models backup
+face_recognition_models_backup/
