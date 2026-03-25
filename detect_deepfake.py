@@ -1,13 +1,18 @@
 import cv2
 import tensorflow as tf
-CATEGORIES = ["Real", "Fake"]
-def prepare(filepath):
-    IMG_SIZE = 50  # 50 in txt-based
-    img_array = cv2.imread(filepath, cv2.IMREAD_GRAYSCALE)  # read in the image, convert to grayscale
-    new_array = cv2.resize(img_array, (IMG_SIZE, IMG_SIZE))  # resize image to match model's expected sizing
-    return new_array.reshape(-1, IMG_SIZE, IMG_SIZE, 1)  # return the image with shaping that TF wants.
+import numpy as np
 
-model = tf.keras.models.load_model("64x3-CNN_CelebDF_Dataset.model")
+CATEGORIES = ["Real", "Fake"]
+
+def prepare(filepath):
+    IMG_SIZE = 50
+    img_array = cv2.imread(filepath, cv2.IMREAD_GRAYSCALE)
+    new_array = cv2.resize(img_array, (IMG_SIZE, IMG_SIZE))
+    normalized = new_array / 255.0  # Normalize like training
+    return normalized.reshape(-1, IMG_SIZE, IMG_SIZE, 1)
+
+# Load trained model
+model = tf.keras.models.load_model("trained_models/CNN_CelebDF_20260325_144921_final.h5")
 
 import matplotlib.pyplot as plt
 import openpyxl
@@ -43,14 +48,14 @@ while(y <= len(video_folders)):
     i=0
     while(i <=(numberImage-1)):
         datatest =(faces_folder_path+"/Real"+str(int(i))+".jpg")
-        prediction = model.predict([prepare((datatest))])  # REMEMBER YOU'RE PASSING A LIST OF THINGS YOU WISH TO PREDICT
-        if prediction == 0:
+        prediction = model.predict([prepare((datatest))], verbose=0)
+        # Model outputs probability (0=Real, 1=Fake)
+        pred_value = prediction[0][0]
+        if pred_value < 0.5:  # Real
             str_label='RealVideo'
             RealArry.append(str(int(i)))
-            #("Fake"+str(int(i))+".jpg")
             CountReal+=1
-        
-        else:
+        else:  # Fake
             str_label='FakeVideo'
             CountFake+=1
         
