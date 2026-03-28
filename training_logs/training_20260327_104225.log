@@ -1,0 +1,330 @@
+2026-03-27 10:42:25,893 - INFO - ================================================================================
+2026-03-27 10:42:25,895 - INFO - STARTING CNN TRAINING WITH GPU SUPPORT (Generator Mode)
+2026-03-27 10:42:25,895 - INFO - ================================================================================
+2026-03-27 10:42:25,896 - INFO - 
+================================================================================
+2026-03-27 10:42:25,897 - INFO - GPU CONFIGURATION CHECK
+2026-03-27 10:42:25,897 - INFO - ================================================================================
+2026-03-27 10:42:25,897 - INFO - TensorFlow version: 2.19.0
+2026-03-27 10:42:26,010 - INFO - GPU Available: [PhysicalDevice(name='/physical_device:GPU:0', device_type='GPU')]
+2026-03-27 10:42:26,010 - INFO - Built with CUDA: True
+2026-03-27 10:42:26,010 - INFO - Found 1 GPU(s)
+2026-03-27 10:42:26,011 - INFO -   GPU 0: PhysicalDevice(name='/physical_device:GPU:0', device_type='GPU')
+2026-03-27 10:42:26,011 - INFO - Testing GPU accessibility...
+2026-03-27 10:42:26,259 - INFO - GPU test successful!
+2026-03-27 10:42:26,259 - INFO - 
+================================================================================
+2026-03-27 10:42:26,259 - INFO - TRAINING CONFIGURATION
+2026-03-27 10:42:26,260 - INFO - ================================================================================
+2026-03-27 10:42:26,260 - INFO - Preprocessed data directory: /content/drive/MyDrive/deepfake/DFT-MF/preprocessed_data
+2026-03-27 10:42:26,260 - INFO - Image size: 50x50
+2026-03-27 10:42:26,260 - INFO - Batch size: 32
+2026-03-27 10:42:26,260 - INFO - Epochs: 50
+2026-03-27 10:42:26,260 - INFO - Model name: CNN_CelebDF_20260327_104225
+2026-03-27 10:42:26,261 - INFO - 
+================================================================================
+2026-03-27 10:42:26,261 - INFO - SETTING UP DATA GENERATORS
+2026-03-27 10:42:26,261 - INFO - ================================================================================
+2026-03-27 10:42:26,261 - INFO - Loading labels for class distribution...
+2026-03-27 10:42:26,265 - INFO - Train samples: 5199
+2026-03-27 10:42:26,266 - INFO - Test samples: 1300
+2026-03-27 10:42:26,266 - INFO - 
+Class distribution:
+2026-03-27 10:42:26,266 - INFO -   Training - Real: 2603, Fake: 2596
+2026-03-27 10:42:26,266 - INFO -   Testing  - Real: 657, Fake: 643
+2026-03-27 10:42:26,266 - INFO - 
+Class weights: {0: np.float64(0.9986553976181329), 1: np.float64(1.0013482280431434)}
+2026-03-27 10:42:26,267 - INFO - 
+Creating data generators...
+2026-03-27 10:42:26,271 - INFO - Steps per epoch: 162
+2026-03-27 10:42:26,271 - INFO - Validation steps: 40
+2026-03-27 10:42:26,272 - INFO - 
+================================================================================
+2026-03-27 10:42:26,272 - INFO - BUILDING CNN MODEL
+2026-03-27 10:42:26,272 - INFO - ================================================================================
+2026-03-27 10:42:27,258 - INFO - Model: "sequential"
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┓
+┃ Layer (type)                    ┃ Output Shape           ┃       Param # ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━┩
+│ conv2d (Conv2D)                 │ (None, 48, 48, 256)    │         2,560 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ activation (Activation)         │ (None, 48, 48, 256)    │             0 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ max_pooling2d (MaxPooling2D)    │ (None, 24, 24, 256)    │             0 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ conv2d_1 (Conv2D)               │ (None, 22, 22, 128)    │       295,040 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ activation_1 (Activation)       │ (None, 22, 22, 128)    │             0 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ max_pooling2d_1 (MaxPooling2D)  │ (None, 11, 11, 128)    │             0 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ dropout (Dropout)               │ (None, 11, 11, 128)    │             0 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ flatten (Flatten)               │ (None, 15488)          │             0 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ dense (Dense)                   │ (None, 64)             │       991,296 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ activation_2 (Activation)       │ (None, 64)             │             0 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ dense_1 (Dense)                 │ (None, 1)              │            65 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ activation_3 (Activation)       │ (None, 1)              │             0 │
+└─────────────────────────────────┴────────────────────────┴───────────────┘
+ Total params: 1,288,961 (4.92 MB)
+ Trainable params: 1,288,961 (4.92 MB)
+ Non-trainable params: 0 (0.00 B)
+
+2026-03-27 10:42:27,258 - INFO - 
+Compiling model...
+2026-03-27 10:42:27,283 - INFO - TensorBoard logs: logs/CNN_CelebDF_20260327_104225
+2026-03-27 10:42:27,284 - INFO - Model checkpoints: callbacks
+2026-03-27 10:42:27,284 - INFO - 
+================================================================================
+2026-03-27 10:42:27,284 - INFO - STARTING TRAINING
+2026-03-27 10:42:27,284 - INFO - ================================================================================
+2026-03-27 10:42:27,284 - INFO - Training on device: /GPU:0
+2026-03-27 10:42:27,285 - INFO - Loading data from /content/drive/MyDrive/deepfake/DFT-MF/preprocessed_data/X_train.pickle...
+2026-03-27 10:42:27,817 - INFO - 
+[Epoch 1/50] Starting...
+2026-03-27 10:42:36,348 - INFO - Loading data from /content/drive/MyDrive/deepfake/DFT-MF/preprocessed_data/X_test.pickle...
+2026-03-27 10:42:37,372 - INFO - [Epoch 1/50] Completed in 9.6s
+2026-03-27 10:42:37,373 - INFO -   Train Loss: 0.4784 | Train Acc: 0.7679
+2026-03-27 10:42:37,373 - INFO -   Val Loss:   0.3112 | Val Acc:   0.8672
+2026-03-27 10:42:37,373 - INFO -   Progress: 2.0% | Best Val Acc: 0.8672
+2026-03-27 10:42:37,754 - WARNING - You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
+2026-03-27 10:42:37,843 - INFO - 
+[Epoch 2/50] Starting...
+2026-03-27 10:42:40,354 - INFO - [Epoch 2/50] Completed in 2.5s
+2026-03-27 10:42:40,355 - INFO -   Train Loss: 0.2708 | Train Acc: 0.8877
+2026-03-27 10:42:40,355 - INFO -   Val Loss:   0.2227 | Val Acc:   0.9039
+2026-03-27 10:42:40,355 - INFO -   Progress: 4.0% | Best Val Acc: 0.8672
+2026-03-27 10:42:40,672 - WARNING - You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
+2026-03-27 10:42:40,769 - INFO - 
+[Epoch 3/50] Starting...
+2026-03-27 10:42:43,282 - INFO - [Epoch 3/50] Completed in 2.5s
+2026-03-27 10:42:43,282 - INFO -   Train Loss: 0.2073 | Train Acc: 0.9201
+2026-03-27 10:42:43,282 - INFO -   Val Loss:   0.1834 | Val Acc:   0.9273
+2026-03-27 10:42:43,282 - INFO -   Progress: 6.0% | Best Val Acc: 0.9039
+2026-03-27 10:42:43,601 - WARNING - You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
+2026-03-27 10:42:43,697 - INFO - 
+[Epoch 4/50] Starting...
+2026-03-27 10:42:46,452 - INFO - [Epoch 4/50] Completed in 2.8s
+2026-03-27 10:42:46,452 - INFO -   Train Loss: 0.1675 | Train Acc: 0.9396
+2026-03-27 10:42:46,452 - INFO -   Val Loss:   0.2331 | Val Acc:   0.9156
+2026-03-27 10:42:46,452 - INFO -   Progress: 8.0% | Best Val Acc: 0.9273
+2026-03-27 10:42:46,897 - INFO - 
+[Epoch 5/50] Starting...
+2026-03-27 10:42:49,534 - INFO - [Epoch 5/50] Completed in 2.6s
+2026-03-27 10:42:49,534 - INFO -   Train Loss: 0.1530 | Train Acc: 0.9473
+2026-03-27 10:42:49,534 - INFO -   Val Loss:   0.1445 | Val Acc:   0.9477
+2026-03-27 10:42:49,535 - INFO -   Progress: 10.0% | Best Val Acc: 0.9273
+2026-03-27 10:42:49,824 - WARNING - You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
+2026-03-27 10:42:49,929 - INFO - 
+[Epoch 6/50] Starting...
+2026-03-27 10:42:52,708 - INFO - [Epoch 6/50] Completed in 2.8s
+2026-03-27 10:42:52,708 - INFO -   Train Loss: 0.1347 | Train Acc: 0.9518
+2026-03-27 10:42:52,708 - INFO -   Val Loss:   0.1360 | Val Acc:   0.9430
+2026-03-27 10:42:52,709 - INFO -   Progress: 12.0% | Best Val Acc: 0.9477
+2026-03-27 10:42:53,226 - INFO - 
+[Epoch 7/50] Starting...
+2026-03-27 10:42:55,734 - INFO - [Epoch 7/50] Completed in 2.5s
+2026-03-27 10:42:55,734 - INFO -   Train Loss: 0.1271 | Train Acc: 0.9524
+2026-03-27 10:42:55,734 - INFO -   Val Loss:   0.1314 | Val Acc:   0.9508
+2026-03-27 10:42:55,735 - INFO -   Progress: 14.0% | Best Val Acc: 0.9477
+2026-03-27 10:42:56,077 - WARNING - You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
+2026-03-27 10:42:56,187 - INFO - 
+[Epoch 8/50] Starting...
+2026-03-27 10:42:58,820 - INFO - [Epoch 8/50] Completed in 2.6s
+2026-03-27 10:42:58,820 - INFO -   Train Loss: 0.1091 | Train Acc: 0.9599
+2026-03-27 10:42:58,820 - INFO -   Val Loss:   0.1149 | Val Acc:   0.9555
+2026-03-27 10:42:58,820 - INFO -   Progress: 16.0% | Best Val Acc: 0.9508
+2026-03-27 10:42:59,263 - WARNING - You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
+2026-03-27 10:42:59,413 - INFO - 
+[Epoch 9/50] Starting...
+2026-03-27 10:43:03,868 - INFO - [Epoch 9/50] Completed in 4.5s
+2026-03-27 10:43:03,868 - INFO -   Train Loss: 0.1058 | Train Acc: 0.9618
+2026-03-27 10:43:03,868 - INFO -   Val Loss:   0.1496 | Val Acc:   0.9383
+2026-03-27 10:43:03,868 - INFO -   Progress: 18.0% | Best Val Acc: 0.9555
+2026-03-27 10:43:04,179 - INFO - 
+[Epoch 10/50] Starting...
+2026-03-27 10:43:06,724 - INFO - [Epoch 10/50] Completed in 2.5s
+2026-03-27 10:43:06,725 - INFO -   Train Loss: 0.1019 | Train Acc: 0.9630
+2026-03-27 10:43:06,725 - INFO -   Val Loss:   0.1063 | Val Acc:   0.9602
+2026-03-27 10:43:06,725 - INFO -   Progress: 20.0% | Best Val Acc: 0.9555
+2026-03-27 10:43:07,042 - WARNING - You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
+2026-03-27 10:43:07,139 - INFO - 
+[Epoch 11/50] Starting...
+2026-03-27 10:43:09,720 - INFO - [Epoch 11/50] Completed in 2.6s
+2026-03-27 10:43:09,721 - INFO -   Train Loss: 0.0841 | Train Acc: 0.9689
+2026-03-27 10:43:09,721 - INFO -   Val Loss:   0.0914 | Val Acc:   0.9672
+2026-03-27 10:43:09,721 - INFO -   Progress: 22.0% | Best Val Acc: 0.9602
+2026-03-27 10:43:10,019 - WARNING - You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
+2026-03-27 10:43:10,123 - INFO - 
+[Epoch 12/50] Starting...
+2026-03-27 10:43:12,919 - INFO - [Epoch 12/50] Completed in 2.8s
+2026-03-27 10:43:12,919 - INFO -   Train Loss: 0.0785 | Train Acc: 0.9697
+2026-03-27 10:43:12,919 - INFO -   Val Loss:   0.0993 | Val Acc:   0.9672
+2026-03-27 10:43:12,920 - INFO -   Progress: 24.0% | Best Val Acc: 0.9672
+2026-03-27 10:43:13,368 - INFO - 
+[Epoch 13/50] Starting...
+2026-03-27 10:43:16,144 - INFO - [Epoch 13/50] Completed in 2.8s
+2026-03-27 10:43:16,145 - INFO -   Train Loss: 0.0690 | Train Acc: 0.9730
+2026-03-27 10:43:16,145 - INFO -   Val Loss:   0.0932 | Val Acc:   0.9711
+2026-03-27 10:43:16,145 - INFO -   Progress: 26.0% | Best Val Acc: 0.9672
+2026-03-27 10:43:16,476 - WARNING - You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
+2026-03-27 10:43:16,572 - INFO - 
+[Epoch 14/50] Starting...
+2026-03-27 10:43:19,109 - INFO - [Epoch 14/50] Completed in 2.5s
+2026-03-27 10:43:19,109 - INFO -   Train Loss: 0.0702 | Train Acc: 0.9718
+2026-03-27 10:43:19,110 - INFO -   Val Loss:   0.1015 | Val Acc:   0.9688
+2026-03-27 10:43:19,110 - INFO -   Progress: 28.0% | Best Val Acc: 0.9711
+2026-03-27 10:43:19,422 - INFO - 
+[Epoch 15/50] Starting...
+2026-03-27 10:43:21,933 - INFO - [Epoch 15/50] Completed in 2.5s
+2026-03-27 10:43:21,933 - INFO -   Train Loss: 0.0686 | Train Acc: 0.9740
+2026-03-27 10:43:21,934 - INFO -   Val Loss:   0.0800 | Val Acc:   0.9734
+2026-03-27 10:43:21,934 - INFO -   Progress: 30.0% | Best Val Acc: 0.9711
+2026-03-27 10:43:22,254 - WARNING - You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
+2026-03-27 10:43:22,354 - INFO - 
+[Epoch 16/50] Starting...
+2026-03-27 10:43:24,857 - INFO - [Epoch 16/50] Completed in 2.5s
+2026-03-27 10:43:24,857 - INFO -   Train Loss: 0.0500 | Train Acc: 0.9817
+2026-03-27 10:43:24,857 - INFO -   Val Loss:   0.0732 | Val Acc:   0.9781
+2026-03-27 10:43:24,857 - INFO -   Progress: 32.0% | Best Val Acc: 0.9734
+2026-03-27 10:43:25,202 - WARNING - You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
+2026-03-27 10:43:25,321 - INFO - 
+[Epoch 17/50] Starting...
+2026-03-27 10:43:28,154 - INFO - [Epoch 17/50] Completed in 2.8s
+2026-03-27 10:43:28,154 - INFO -   Train Loss: 0.0508 | Train Acc: 0.9813
+2026-03-27 10:43:28,154 - INFO -   Val Loss:   0.0800 | Val Acc:   0.9719
+2026-03-27 10:43:28,154 - INFO -   Progress: 34.0% | Best Val Acc: 0.9781
+2026-03-27 10:43:28,624 - INFO - 
+[Epoch 18/50] Starting...
+2026-03-27 10:43:33,067 - INFO - [Epoch 18/50] Completed in 4.4s
+2026-03-27 10:43:33,067 - INFO -   Train Loss: 0.0440 | Train Acc: 0.9842
+2026-03-27 10:43:33,067 - INFO -   Val Loss:   0.0947 | Val Acc:   0.9656
+2026-03-27 10:43:33,068 - INFO -   Progress: 36.0% | Best Val Acc: 0.9781
+2026-03-27 10:43:33,381 - INFO - 
+[Epoch 19/50] Starting...
+2026-03-27 10:43:35,910 - INFO - [Epoch 19/50] Completed in 2.5s
+2026-03-27 10:43:35,911 - INFO -   Train Loss: 0.0378 | Train Acc: 0.9855
+2026-03-27 10:43:35,911 - INFO -   Val Loss:   0.0684 | Val Acc:   0.9789
+2026-03-27 10:43:35,911 - INFO -   Progress: 38.0% | Best Val Acc: 0.9781
+2026-03-27 10:43:36,220 - WARNING - You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
+2026-03-27 10:43:37,061 - INFO - 
+[Epoch 20/50] Starting...
+2026-03-27 10:43:39,651 - INFO - [Epoch 20/50] Completed in 2.6s
+2026-03-27 10:43:39,653 - INFO -   Train Loss: 0.0298 | Train Acc: 0.9888
+2026-03-27 10:43:39,653 - INFO -   Val Loss:   0.0724 | Val Acc:   0.9734
+2026-03-27 10:43:39,653 - INFO -   Progress: 40.0% | Best Val Acc: 0.9789
+2026-03-27 10:43:40,114 - INFO - 
+[Epoch 21/50] Starting...
+2026-03-27 10:43:42,902 - INFO - [Epoch 21/50] Completed in 2.8s
+2026-03-27 10:43:42,902 - INFO -   Train Loss: 0.0348 | Train Acc: 0.9867
+2026-03-27 10:43:42,903 - INFO -   Val Loss:   0.0822 | Val Acc:   0.9758
+2026-03-27 10:43:42,903 - INFO -   Progress: 42.0% | Best Val Acc: 0.9789
+2026-03-27 10:43:43,249 - INFO - 
+[Epoch 22/50] Starting...
+2026-03-27 10:43:45,741 - INFO - [Epoch 22/50] Completed in 2.5s
+2026-03-27 10:43:45,742 - INFO -   Train Loss: 0.0392 | Train Acc: 0.9848
+2026-03-27 10:43:45,742 - INFO -   Val Loss:   0.0641 | Val Acc:   0.9820
+2026-03-27 10:43:45,742 - INFO -   Progress: 44.0% | Best Val Acc: 0.9789
+2026-03-27 10:43:46,043 - WARNING - You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
+2026-03-27 10:43:46,142 - INFO - 
+[Epoch 23/50] Starting...
+2026-03-27 10:43:48,649 - INFO - [Epoch 23/50] Completed in 2.5s
+2026-03-27 10:43:48,650 - INFO -   Train Loss: 0.0359 | Train Acc: 0.9861
+2026-03-27 10:43:48,650 - INFO -   Val Loss:   0.0602 | Val Acc:   0.9844
+2026-03-27 10:43:48,650 - INFO -   Progress: 46.0% | Best Val Acc: 0.9820
+2026-03-27 10:43:48,942 - WARNING - You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
+2026-03-27 10:43:49,036 - INFO - 
+[Epoch 24/50] Starting...
+2026-03-27 10:43:51,529 - INFO - [Epoch 24/50] Completed in 2.5s
+2026-03-27 10:43:51,529 - INFO -   Train Loss: 0.0296 | Train Acc: 0.9894
+2026-03-27 10:43:51,529 - INFO -   Val Loss:   0.0757 | Val Acc:   0.9828
+2026-03-27 10:43:51,529 - INFO -   Progress: 48.0% | Best Val Acc: 0.9844
+2026-03-27 10:43:51,826 - INFO - 
+[Epoch 25/50] Starting...
+2026-03-27 10:43:54,488 - INFO - [Epoch 25/50] Completed in 2.7s
+2026-03-27 10:43:54,488 - INFO -   Train Loss: 0.0252 | Train Acc: 0.9900
+2026-03-27 10:43:54,489 - INFO -   Val Loss:   0.0574 | Val Acc:   0.9812
+2026-03-27 10:43:54,489 - INFO -   Progress: 50.0% | Best Val Acc: 0.9844
+2026-03-27 10:43:54,964 - INFO - 
+[Epoch 26/50] Starting...
+2026-03-27 10:43:57,741 - INFO - [Epoch 26/50] Completed in 2.8s
+2026-03-27 10:43:57,742 - INFO -   Train Loss: 0.0251 | Train Acc: 0.9905
+2026-03-27 10:43:57,742 - INFO -   Val Loss:   0.0582 | Val Acc:   0.9844
+2026-03-27 10:43:57,742 - INFO -   Progress: 52.0% | Best Val Acc: 0.9844
+2026-03-27 10:43:58,070 - INFO - 
+[Epoch 27/50] Starting...
+2026-03-27 10:44:00,644 - INFO - [Epoch 27/50] Completed in 2.6s
+2026-03-27 10:44:00,645 - INFO -   Train Loss: 0.0223 | Train Acc: 0.9921
+2026-03-27 10:44:00,645 - INFO -   Val Loss:   0.0648 | Val Acc:   0.9836
+2026-03-27 10:44:00,645 - INFO -   Progress: 54.0% | Best Val Acc: 0.9844
+2026-03-27 10:44:00,958 - INFO - 
+[Epoch 28/50] Starting...
+2026-03-27 10:44:03,476 - INFO - [Epoch 28/50] Completed in 2.5s
+2026-03-27 10:44:03,476 - INFO -   Train Loss: 0.0248 | Train Acc: 0.9902
+2026-03-27 10:44:03,477 - INFO -   Val Loss:   0.0694 | Val Acc:   0.9773
+2026-03-27 10:44:03,477 - INFO -   Progress: 56.0% | Best Val Acc: 0.9844
+2026-03-27 10:44:03,784 - INFO - 
+[Epoch 29/50] Starting...
+2026-03-27 10:44:06,287 - INFO - [Epoch 29/50] Completed in 2.5s
+2026-03-27 10:44:06,288 - INFO -   Train Loss: 0.0306 | Train Acc: 0.9886
+2026-03-27 10:44:06,288 - INFO -   Val Loss:   0.0747 | Val Acc:   0.9797
+2026-03-27 10:44:06,288 - INFO -   Progress: 58.0% | Best Val Acc: 0.9844
+2026-03-27 10:44:06,597 - INFO - 
+[Epoch 30/50] Starting...
+2026-03-27 10:44:09,337 - INFO - [Epoch 30/50] Completed in 2.7s
+2026-03-27 10:44:09,337 - INFO -   Train Loss: 0.0159 | Train Acc: 0.9944
+2026-03-27 10:44:09,337 - INFO -   Val Loss:   0.0684 | Val Acc:   0.9836
+2026-03-27 10:44:09,338 - INFO -   Progress: 60.0% | Best Val Acc: 0.9844
+2026-03-27 10:44:09,771 - INFO - 
+[Epoch 31/50] Starting...
+2026-03-27 10:44:12,393 - INFO - [Epoch 31/50] Completed in 2.6s
+2026-03-27 10:44:12,394 - INFO -   Train Loss: 0.0179 | Train Acc: 0.9932
+2026-03-27 10:44:12,394 - INFO -   Val Loss:   0.0650 | Val Acc:   0.9836
+2026-03-27 10:44:12,394 - INFO -   Progress: 62.0% | Best Val Acc: 0.9844
+2026-03-27 10:44:12,714 - INFO - 
+[Epoch 32/50] Starting...
+2026-03-27 10:44:15,206 - INFO - [Epoch 32/50] Completed in 2.5s
+2026-03-27 10:44:15,207 - INFO -   Train Loss: 0.0148 | Train Acc: 0.9948
+2026-03-27 10:44:15,207 - INFO -   Val Loss:   0.0759 | Val Acc:   0.9828
+2026-03-27 10:44:15,207 - INFO -   Progress: 64.0% | Best Val Acc: 0.9844
+2026-03-27 10:44:15,520 - INFO - 
+[Epoch 33/50] Starting...
+2026-03-27 10:44:18,013 - INFO - [Epoch 33/50] Completed in 2.5s
+2026-03-27 10:44:18,014 - INFO -   Train Loss: 0.0252 | Train Acc: 0.9909
+2026-03-27 10:44:18,014 - INFO -   Val Loss:   0.0620 | Val Acc:   0.9836
+2026-03-27 10:44:18,014 - INFO -   Progress: 66.0% | Best Val Acc: 0.9844
+2026-03-27 10:44:18,311 - INFO - 
+[Epoch 34/50] Starting...
+2026-03-27 10:44:20,784 - INFO - [Epoch 34/50] Completed in 2.5s
+2026-03-27 10:44:20,785 - INFO -   Train Loss: 0.0146 | Train Acc: 0.9932
+2026-03-27 10:44:20,785 - INFO -   Val Loss:   0.0799 | Val Acc:   0.9812
+2026-03-27 10:44:20,785 - INFO -   Progress: 68.0% | Best Val Acc: 0.9844
+2026-03-27 10:44:21,173 - INFO - 
+[Epoch 35/50] Starting...
+2026-03-27 10:44:23,903 - INFO - [Epoch 35/50] Completed in 2.7s
+2026-03-27 10:44:23,903 - INFO -   Train Loss: 0.0216 | Train Acc: 0.9915
+2026-03-27 10:44:23,905 - INFO -   Val Loss:   0.1086 | Val Acc:   0.9734
+2026-03-27 10:44:23,905 - INFO -   Progress: 70.0% | Best Val Acc: 0.9844
+2026-03-27 10:44:24,371 - INFO - 
+================================================================================
+2026-03-27 10:44:24,372 - INFO - FINAL EVALUATION
+2026-03-27 10:44:24,372 - INFO - ================================================================================
+2026-03-27 10:44:24,700 - INFO - Test Loss: 0.0574
+2026-03-27 10:44:24,701 - INFO - Test Accuracy: 0.9812
+2026-03-27 10:44:24,703 - INFO - Test Precision: 0.9887
+2026-03-27 10:44:24,705 - INFO - Test Recall: 0.9730
+2026-03-27 10:44:24,706 - INFO - Test F1-Score: 0.9808
+2026-03-27 10:44:24,712 - WARNING - You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
+2026-03-27 10:44:24,817 - INFO - 
+Final model saved: trained_models/CNN_CelebDF_20260327_104225_final.h5
+2026-03-27 10:44:24,818 - INFO - 
+================================================================================
+2026-03-27 10:44:24,819 - INFO - TRAINING COMPLETED SUCCESSFULLY!
+2026-03-27 10:44:24,819 - INFO - ================================================================================
+2026-03-27 10:44:24,819 - INFO - Log file: training_logs/training_20260327_104225.log
+2026-03-27 10:44:24,819 - INFO - TensorBoard: tensorboard --logdir=logs/CNN_CelebDF_20260327_104225
+2026-03-27 10:44:24,819 - INFO - ================================================================================

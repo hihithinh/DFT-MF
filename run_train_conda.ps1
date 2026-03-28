@@ -2,7 +2,11 @@
 $pythonExe = "C:\Users\Admin\.conda\envs\tf_gpu\python.exe"
 $scriptPath = "D:\Hoc\Study\computer-vision\DFT-MF\train_cnn_generator.py"
 
+# Get dataset from command line argument (default: CelebDF)
+$dataset = if ($args.Count -gt 0) { $args[0] } else { "CelebDF" }
+
 Write-Host "Starting CNN Training (tf_gpu environment)..." -ForegroundColor Cyan
+Write-Host "Dataset: $dataset" -ForegroundColor Gray
 
 # Add CUDA 11.2 paths (required for TensorFlow 2.10)
 $cuda112 = "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.2\bin"
@@ -19,7 +23,7 @@ $env:PYTHONIOENCODING = "utf-8"
 
 # Run training
 $startTime = Get-Date
-& $pythonExe -u $scriptPath
+& $pythonExe -u $scriptPath $dataset
 $exitCode = $LASTEXITCODE
 $duration = (Get-Date) - $startTime
 

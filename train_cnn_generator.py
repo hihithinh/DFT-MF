@@ -9,6 +9,7 @@ from datetime import datetime
 import logging
 import time
 import sys
+import argparse
 
 # Setup logging
 log_dir = "training_logs"
@@ -29,9 +30,18 @@ logger = logging.getLogger(__name__)
 sys.stdout.reconfigure(line_buffering=True)
 sys.stderr.reconfigure(line_buffering=True)
 
+# Parse command line arguments
+parser = argparse.ArgumentParser(description='Train CNN model for deepfake detection')
+parser.add_argument('dataset', nargs='?', default='CelebDF', choices=['UADFV', 'CelebDF'],
+                    help='Dataset name: UADFV or CelebDF (default: CelebDF)')
+args = parser.parse_args()
+
+dataset_name = args.dataset
+
 logger.info("="*80)
 logger.info("STARTING CNN TRAINING WITH GPU SUPPORT (Generator Mode)")
 logger.info("="*80)
+logger.info(f"Dataset: {dataset_name}")
 
 # Check GPU
 logger.info("\n" + "="*80)
@@ -62,15 +72,17 @@ else:
 
 # Configuration
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-PREPARED_DIR = os.path.join(BASE_DIR, "preprocessed_data")
+# Determine preprocessed data directory based on dataset
+PREPARED_DIR = os.path.join(BASE_DIR, dataset_name, "preprocessed_data")
 IMG_SIZE = 50
 BATCH_SIZE = 32
 EPOCHS = 50
-MODEL_NAME = f"CNN_CelebDF_{timestamp}"
+MODEL_NAME = f"CNN_{dataset_name}_{timestamp}"
 
 logger.info("\n" + "="*80)
 logger.info("TRAINING CONFIGURATION")
 logger.info("="*80)
+logger.info(f"Dataset: {dataset_name}")
 logger.info(f"Preprocessed data directory: {PREPARED_DIR}")
 logger.info(f"Image size: {IMG_SIZE}x{IMG_SIZE}")
 logger.info(f"Batch size: {BATCH_SIZE}")
@@ -101,7 +113,7 @@ class PickleDataGenerator(tf.keras.utils.Sequence):
         if self.X_cache is None:
             logger.info(f"Loading data from {self.X_path}...")
             with open(self.X_path, "rb") as f:
-                self.X_cache = pickle.load(f) / 255.0
+                self.X_cache = pickle.load(f)  # Already normalized in prepare_data.py
         
         # Get batch indexes
         batch_indexes = self.indexes[index * self.batch_size:(index + 1) * self.batch_size]
@@ -122,6 +134,8 @@ logger.info("="*80)
 
 X_train_path = os.path.join(PREPARED_DIR, "X_train.pickle")
 y_train_path = os.path.join(PREPARED_DIR, "y_train.pickle")
+X_val_path = os.path.join(PREPARED_DIR, "X_val.pickle")
+y_val_path = os.path.join(PREPARED_DIR, "y_val.pickle")
 X_test_path = os.path.join(PREPARED_DIR, "X_test.pickle")
 y_test_path = os.path.join(PREPARED_DIR, "y_test.pickle")
 
@@ -129,21 +143,27 @@ y_test_path = os.path.join(PREPARED_DIR, "y_test.pickle")
 logger.info("Loading labels for class distribution...")
 with open(y_train_path, "rb") as f:
     y_train = pickle.load(f)
+with open(y_val_path, "rb") as f:
+    y_val = pickle.load(f)
 with open(y_test_path, "rb") as f:
     y_test = pickle.load(f)
 
 logger.info(f"Train samples: {len(y_train)}")
+logger.info(f"Validation samples: {len(y_val)}")
 logger.info(f"Test samples: {len(y_test)}")
 
 # Calculate class distribution
 train_real = np.sum(y_train == 0)
 train_fake = np.sum(y_train == 1)
+val_real = np.sum(y_val == 0)
+val_fake = np.sum(y_val == 1)
 test_real = np.sum(y_test == 0)
 test_fake = np.sum(y_test == 1)
 
 logger.info("\nClass distribution:")
-logger.info(f"  Training - Real: {train_real}, Fake: {train_fake}")
-logger.info(f"  Testing  - Real: {test_real}, Fake: {test_fake}")
+logger.info(f"  Training   - Real: {train_real}, Fake: {train_fake}")
+logger.info(f"  Validation - Real: {val_real}, Fake: {val_fake}")
+logger.info(f"  Testing    - Real: {test_real}, Fake: {test_fake}")
 
 # Calculate class weights
 total_train = len(y_train)
@@ -155,10 +175,11 @@ logger.info(f"\nClass weights: {class_weight}")
 # Create generators
 logger.info("\nCreating data generators...")
 train_generator = PickleDataGenerator(X_train_path, y_train_path, BATCH_SIZE, shuffle=True)
+val_generator = PickleDataGenerator(X_val_path, y_val_path, BATCH_SIZE, shuffle=False)
 test_generator = PickleDataGenerator(X_test_path, y_test_path, BATCH_SIZE, shuffle=False)
 
 steps_per_epoch = len(train_generator)
-validation_steps = len(test_generator)
+validation_steps = len(val_generator)
 
 logger.info(f"Steps per epoch: {steps_per_epoch}")
 logger.info(f"Validation steps: {validation_steps}")
@@ -272,7 +293,7 @@ history = model.fit(
     train_generator,
     steps_per_epoch=steps_per_epoch,
     epochs=EPOCHS,
-    validation_data=test_generator,
+    validation_data=val_generator,
     validation_steps=validation_steps,
     class_weight=class_weight,
     callbacks=callbacks,

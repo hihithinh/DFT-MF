@@ -1,6 +1,8 @@
 import cv2
 import tensorflow as tf
 import numpy as np
+import argparse
+import sys
 
 CATEGORIES = ["Real", "Fake"]
 
@@ -11,8 +13,30 @@ def prepare(filepath):
     normalized = new_array / 255.0  # Normalize like training
     return normalized.reshape(-1, IMG_SIZE, IMG_SIZE, 1)
 
+# Parse command line arguments
+parser = argparse.ArgumentParser(description='Detect deepfake using trained model')
+parser.add_argument('dataset', nargs='?', default='CelebDF', choices=['UADFV', 'CelebDF'],
+                    help='Dataset name: UADFV or CelebDF (default: CelebDF)')
+parser.add_argument('--model', type=str, help='Path to trained model file (optional)')
+args = parser.parse_args()
+
+dataset_name = args.dataset
+
 # Load trained model
-model = tf.keras.models.load_model("trained_models/CNN_CelebDF_20260325_144921_final.h5")
+if args.model:
+    model_path = args.model
+else:
+    # Find the latest model for the dataset
+    import glob
+    model_files = glob.glob(f"trained_models/CNN_{dataset_name}_*_final.h5")
+    if not model_files:
+        print(f"No trained model found for dataset {dataset_name}")
+        print(f"Please train a model first or specify --model path")
+        sys.exit(1)
+    model_path = sorted(model_files)[-1]  # Use the latest model
+    print(f"Using model: {model_path}")
+
+model = tf.keras.models.load_model(model_path)
 
 import matplotlib.pyplot as plt
 import openpyxl
@@ -27,14 +51,25 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 IMG_SIZE =500
 sheetCount=1
 
-# Get all video folders from CroppedMouth
-cropped_mouth_dir = os.path.join(BASE_DIR, "CroppedMouth")
+# Get all video folders from CroppedMouth (different structure for each dataset)
+if dataset_name == "UADFV":
+    # UADFV: UADFV/CroppedMouth/video_name/
+    cropped_mouth_dir = os.path.join(BASE_DIR, dataset_name, "CroppedMouth")
+else:
+    # CelebDF: CroppedMouth/CelebDF/video_name/
+    cropped_mouth_dir = os.path.join(BASE_DIR, "CroppedMouth", dataset_name)
+
+if not os.path.exists(cropped_mouth_dir):
+    print(f"CroppedMouth directory not found: {cropped_mouth_dir}")
+    print(f"Please run crop_open_mouth_gpu.py {dataset_name} first")
+    sys.exit(1)
+
 video_folders = sorted([d for d in os.listdir(cropped_mouth_dir) if os.path.isdir(os.path.join(cropped_mouth_dir, d))])
 
 y=1
 while(y <= len(video_folders)):
     start= timer()
-    book = openpyxl.load_workbook(os.path.join(BASE_DIR, 'Result.xlsx'))
+    book = openpyxl.load_workbook(os.path.join(BASE_DIR, dataset_name, 'Result.xlsx'))
     sheet = book.active
     Result=" "
     CountReal=0
@@ -42,7 +77,14 @@ while(y <= len(video_folders)):
     RealArry=[]
     
     video_name = video_folders[y-1]
-    faces_folder_path = os.path.join(BASE_DIR, "CroppedMouth", video_name)
+    
+    # Different path structure for different datasets
+    if dataset_name == "UADFV":
+        # UADFV: UADFV/CroppedMouth/video_name/
+        faces_folder_path = os.path.join(BASE_DIR, dataset_name, "CroppedMouth", video_name)
+    else:
+        # CelebDF: CroppedMouth/CelebDF/video_name/
+        faces_folder_path = os.path.join(BASE_DIR, "CroppedMouth", dataset_name, video_name)
     numberImage=len(glob.glob(os.path.join(faces_folder_path, "*.jpg")))
     print("Total number of Images in RF "+str(int(y))+ "=  "+ str(int(numberImage))) 
     i=0
@@ -90,7 +132,7 @@ while(y <= len(video_folders)):
     sheet['J'+str(int(sheetCount))] = (Result)     
     end = timer()
     sheet['M'+str(sheetCount)] = (int(end-start)) 
-    book.save(os.path.join(BASE_DIR, "Result.xlsx"))
+    book.save(os.path.join(BASE_DIR, dataset_name, "Result.xlsx"))
     sheetCount+=1
     print("                                                    ")
     print("Time taken:" ,   int(end-start) ,         "  seconds")

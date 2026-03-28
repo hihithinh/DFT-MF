@@ -1,0 +1,138 @@
+2026-03-28 11:38:34,983 - INFO - ================================================================================
+2026-03-28 11:38:34,983 - INFO - STARTING CNN TRAINING WITH GPU SUPPORT (Generator Mode)
+2026-03-28 11:38:34,984 - INFO - ================================================================================
+2026-03-28 11:38:34,984 - INFO - Dataset: UADFV
+2026-03-28 11:38:34,984 - INFO - 
+================================================================================
+2026-03-28 11:38:34,984 - INFO - GPU CONFIGURATION CHECK
+2026-03-28 11:38:34,984 - INFO - ================================================================================
+2026-03-28 11:38:34,984 - INFO - TensorFlow version: 2.10.0
+2026-03-28 11:38:35,029 - INFO - GPU Available: [PhysicalDevice(name='/physical_device:GPU:0', device_type='GPU')]
+2026-03-28 11:38:35,029 - INFO - Built with CUDA: True
+2026-03-28 11:38:35,029 - INFO - Found 1 GPU(s)
+2026-03-28 11:38:35,029 - INFO -   GPU 0: PhysicalDevice(name='/physical_device:GPU:0', device_type='GPU')
+2026-03-28 11:38:35,029 - INFO - Testing GPU accessibility...
+2026-03-28 11:38:36,055 - INFO - GPU test successful!
+2026-03-28 11:38:36,055 - INFO - 
+================================================================================
+2026-03-28 11:38:36,055 - INFO - TRAINING CONFIGURATION
+2026-03-28 11:38:36,055 - INFO - ================================================================================
+2026-03-28 11:38:36,055 - INFO - Dataset: UADFV
+2026-03-28 11:38:36,055 - INFO - Preprocessed data directory: D:\Hoc\Study\computer-vision\DFT-MF\preprocessed_data
+2026-03-28 11:38:36,055 - INFO - Image size: 50x50
+2026-03-28 11:38:36,055 - INFO - Batch size: 32
+2026-03-28 11:38:36,055 - INFO - Epochs: 50
+2026-03-28 11:38:36,055 - INFO - Model name: CNN_UADFV_20260328_113834
+2026-03-28 11:38:36,055 - INFO - 
+================================================================================
+2026-03-28 11:38:36,055 - INFO - SETTING UP DATA GENERATORS
+2026-03-28 11:38:36,055 - INFO - ================================================================================
+2026-03-28 11:38:36,055 - INFO - Loading labels for class distribution...
+2026-03-28 11:38:36,056 - INFO - Train samples: 24143
+2026-03-28 11:38:36,056 - INFO - Validation samples: 5174
+2026-03-28 11:38:36,056 - INFO - Test samples: 5174
+2026-03-28 11:38:36,056 - INFO - 
+Class distribution:
+2026-03-28 11:38:36,056 - INFO -   Training   - Real: 11955, Fake: 12188
+2026-03-28 11:38:36,056 - INFO -   Validation - Real: 2562, Fake: 2612
+2026-03-28 11:38:36,056 - INFO -   Testing    - Real: 2562, Fake: 2612
+2026-03-28 11:38:36,056 - INFO - 
+Class weights: {0: 1.009744876620661, 1: 0.9904414177879881}
+2026-03-28 11:38:36,056 - INFO - 
+Creating data generators...
+2026-03-28 11:38:36,057 - INFO - Steps per epoch: 754
+2026-03-28 11:38:36,057 - INFO - Validation steps: 161
+2026-03-28 11:38:36,057 - INFO - 
+================================================================================
+2026-03-28 11:38:36,057 - INFO - BUILDING CNN MODEL
+2026-03-28 11:38:36,057 - INFO - ================================================================================
+2026-03-28 11:38:36,125 - INFO - Model: "sequential"
+2026-03-28 11:38:36,125 - INFO - _________________________________________________________________
+2026-03-28 11:38:36,126 - INFO -  Layer (type)                Output Shape              Param #   
+2026-03-28 11:38:36,126 - INFO - =================================================================
+2026-03-28 11:38:36,126 - INFO -  conv2d (Conv2D)             (None, 48, 48, 256)       2560      
+2026-03-28 11:38:36,126 - INFO -                                                                  
+2026-03-28 11:38:36,126 - INFO -  activation (Activation)     (None, 48, 48, 256)       0         
+2026-03-28 11:38:36,126 - INFO -                                                                  
+2026-03-28 11:38:36,126 - INFO -  max_pooling2d (MaxPooling2D  (None, 24, 24, 256)      0         
+2026-03-28 11:38:36,126 - INFO -  )                                                               
+2026-03-28 11:38:36,126 - INFO -                                                                  
+2026-03-28 11:38:36,127 - INFO -  conv2d_1 (Conv2D)           (None, 22, 22, 128)       295040    
+2026-03-28 11:38:36,127 - INFO -                                                                  
+2026-03-28 11:38:36,127 - INFO -  activation_1 (Activation)   (None, 22, 22, 128)       0         
+2026-03-28 11:38:36,127 - INFO -                                                                  
+2026-03-28 11:38:36,127 - INFO -  max_pooling2d_1 (MaxPooling  (None, 11, 11, 128)      0         
+2026-03-28 11:38:36,127 - INFO -  2D)                                                             
+2026-03-28 11:38:36,127 - INFO -                                                                  
+2026-03-28 11:38:36,127 - INFO -  dropout (Dropout)           (None, 11, 11, 128)       0         
+2026-03-28 11:38:36,127 - INFO -                                                                  
+2026-03-28 11:38:36,127 - INFO -  flatten (Flatten)           (None, 15488)             0         
+2026-03-28 11:38:36,127 - INFO -                                                                  
+2026-03-28 11:38:36,127 - INFO -  dense (Dense)               (None, 64)                991296    
+2026-03-28 11:38:36,127 - INFO -                                                                  
+2026-03-28 11:38:36,127 - INFO -  activation_2 (Activation)   (None, 64)                0         
+2026-03-28 11:38:36,127 - INFO -                                                                  
+2026-03-28 11:38:36,127 - INFO -  dense_1 (Dense)             (None, 1)                 65        
+2026-03-28 11:38:36,128 - INFO -                                                                  
+2026-03-28 11:38:36,128 - INFO -  activation_3 (Activation)   (None, 1)                 0         
+2026-03-28 11:38:36,128 - INFO -                                                                  
+2026-03-28 11:38:36,128 - INFO - =================================================================
+2026-03-28 11:38:36,128 - INFO - Total params: 1,288,961
+2026-03-28 11:38:36,128 - INFO - Trainable params: 1,288,961
+2026-03-28 11:38:36,128 - INFO - Non-trainable params: 0
+2026-03-28 11:38:36,128 - INFO - _________________________________________________________________
+2026-03-28 11:38:36,128 - INFO - 
+Compiling model...
+2026-03-28 11:38:36,137 - INFO - TensorBoard logs: logs\CNN_UADFV_20260328_113834
+2026-03-28 11:38:36,137 - INFO - Model checkpoints: callbacks
+2026-03-28 11:38:36,137 - INFO - 
+================================================================================
+2026-03-28 11:38:36,137 - INFO - STARTING TRAINING
+2026-03-28 11:38:36,137 - INFO - ================================================================================
+2026-03-28 11:38:36,137 - INFO - Training on device: /GPU:0
+2026-03-28 11:38:36,138 - INFO - Loading data from D:\Hoc\Study\computer-vision\DFT-MF\preprocessed_data\X_train.pickle...
+2026-03-28 11:38:36,328 - INFO - 
+[Epoch 1/50] Starting...
+2026-03-28 11:38:50,958 - INFO - Loading data from D:\Hoc\Study\computer-vision\DFT-MF\preprocessed_data\X_val.pickle...
+2026-03-28 11:38:52,160 - INFO - [Epoch 1/50] Completed in 15.8s
+2026-03-28 11:38:52,160 - INFO -   Train Loss: 0.6932 | Train Acc: 0.4970
+2026-03-28 11:38:52,161 - INFO -   Val Loss:   0.6931 | Val Acc:   0.5047
+2026-03-28 11:38:52,161 - INFO -   Progress: 2.0% | Best Val Acc: 0.5047
+2026-03-28 11:38:52,341 - INFO - 
+[Epoch 2/50] Starting...
+2026-03-28 11:39:07,729 - INFO - [Epoch 2/50] Completed in 15.4s
+2026-03-28 11:39:07,729 - INFO -   Train Loss: 0.6932 | Train Acc: 0.5002
+2026-03-28 11:39:07,730 - INFO -   Val Loss:   0.6931 | Val Acc:   0.5047
+2026-03-28 11:39:07,730 - INFO -   Progress: 4.0% | Best Val Acc: 0.5047
+2026-03-28 11:39:07,915 - INFO - 
+[Epoch 3/50] Starting...
+2026-03-28 11:39:41,061 - INFO - [Epoch 3/50] Completed in 33.1s
+2026-03-28 11:39:41,061 - INFO -   Train Loss: 0.6932 | Train Acc: 0.4973
+2026-03-28 11:39:41,061 - INFO -   Val Loss:   0.6931 | Val Acc:   0.5047
+2026-03-28 11:39:41,061 - INFO -   Progress: 6.0% | Best Val Acc: 0.5047
+2026-03-28 11:39:41,216 - INFO - 
+[Epoch 4/50] Starting...
+2026-03-28 11:40:14,475 - INFO - [Epoch 4/50] Completed in 33.3s
+2026-03-28 11:40:14,475 - INFO -   Train Loss: 0.6932 | Train Acc: 0.4997
+2026-03-28 11:40:14,475 - INFO -   Val Loss:   0.6932 | Val Acc:   0.4953
+2026-03-28 11:40:14,475 - INFO -   Progress: 8.0% | Best Val Acc: 0.5047
+2026-03-28 11:40:14,608 - INFO - 
+[Epoch 5/50] Starting...
+2026-03-28 11:40:47,349 - INFO - [Epoch 5/50] Completed in 32.7s
+2026-03-28 11:40:47,349 - INFO -   Train Loss: 0.6932 | Train Acc: 0.4992
+2026-03-28 11:40:47,349 - INFO -   Val Loss:   0.6931 | Val Acc:   0.5047
+2026-03-28 11:40:47,349 - INFO -   Progress: 10.0% | Best Val Acc: 0.5047
+2026-03-28 11:40:47,472 - INFO - 
+[Epoch 6/50] Starting...
+2026-03-28 11:41:20,300 - INFO - [Epoch 6/50] Completed in 32.8s
+2026-03-28 11:41:20,300 - INFO -   Train Loss: 0.6932 | Train Acc: 0.5050
+2026-03-28 11:41:20,300 - INFO -   Val Loss:   0.6932 | Val Acc:   0.4953
+2026-03-28 11:41:20,300 - INFO -   Progress: 12.0% | Best Val Acc: 0.5047
+2026-03-28 11:41:20,433 - INFO - 
+[Epoch 7/50] Starting...
+2026-03-28 11:41:53,528 - INFO - [Epoch 7/50] Completed in 33.1s
+2026-03-28 11:41:53,528 - INFO -   Train Loss: 0.6932 | Train Acc: 0.4964
+2026-03-28 11:41:53,530 - INFO -   Val Loss:   0.6931 | Val Acc:   0.5047
+2026-03-28 11:41:53,530 - INFO -   Progress: 14.0% | Best Val Acc: 0.5047
+2026-03-28 11:41:53,707 - INFO - 
+[Epoch 8/50] Starting...

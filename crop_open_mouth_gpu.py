@@ -73,8 +73,9 @@ def Crooped_mouth(frame, detector, predictor):
         return Final_image
     return None
 
-def process_single_video(video_name):
+def process_single_video(args_tuple):
     """Process a single video - will be called in parallel"""
+    video_name, dataset_folder = args_tuple
     import logging
     import sys
     
@@ -96,9 +97,14 @@ def process_single_video(video_name):
         
         model_time = timer() - model_start
         start = timer()
-        faces_folder_path = os.path.join(BASE_DIR, "ExtractFrams", video_name)
-        os.makedirs(os.path.join(BASE_DIR, "CroppedMouth", video_name), exist_ok=True)
-        imagesFolder = os.path.join(BASE_DIR, "CroppedMouth", video_name)
+        
+        faces_folder_path = os.path.join(BASE_DIR, dataset_folder, "ExtractFrams", video_name)
+        
+        # Different folder structure for different datasets
+        mouth_dir = os.path.join(BASE_DIR, dataset_folder, "CroppedMouth", video_name)
+        
+        os.makedirs(mouth_dir, exist_ok=True)
+        imagesFolder = mouth_dir
 
         # Get all frames
         frame_files = sorted(glob.glob(os.path.join(faces_folder_path, "*.jpg")))
@@ -209,10 +215,11 @@ def process_single_video(video_name):
             'time_seconds': elapsed
         }
 
-def get_processed_videos():
+def get_processed_videos(dataset_folder):
     """Get list of already processed videos from Excel"""
     try:
-        book = openpyxl.load_workbook(os.path.join(BASE_DIR, 'Result.xlsx'))
+        result_file = os.path.join(BASE_DIR, dataset_folder, 'Result.xlsx')
+        book = openpyxl.load_workbook(result_file)
         sheet = book.active
         processed = []
         for row in sheet.iter_rows():
@@ -227,6 +234,13 @@ if __name__ == '__main__':
     import logging
     from datetime import datetime
     
+    parser = argparse.ArgumentParser(description='Crop open mouth frames from videos')
+    parser.add_argument('dataset', nargs='?', default='CelebDF', choices=['UADFV', 'CelebDF'],
+                        help='Dataset name: UADFV or CelebDF (default: CelebDF)')
+    args = parser.parse_args()
+    
+    dataset_folder = args.dataset
+    
     # Setup main process logging
     logging.basicConfig(
         level=logging.INFO,
@@ -235,13 +249,24 @@ if __name__ == '__main__':
     )
     log = logging.getLogger(__name__)
     
+    log.info(f"Dataset: {dataset_folder}")
+    log.info(f"Working directory: {os.path.join(BASE_DIR, dataset_folder)}")
+    
+    os.makedirs(os.path.join(BASE_DIR, dataset_folder, "ExtractFrams"), exist_ok=True)
+    
+    # Create CroppedMouth directory based on dataset
+    if dataset_folder == "UADFV":
+        os.makedirs(os.path.join(BASE_DIR, dataset_folder, "CroppedMouth"), exist_ok=True)
+    else:
+        os.makedirs(os.path.join(BASE_DIR, "CroppedMouth", dataset_folder), exist_ok=True)
+    
     # Get all video folders
-    extract_frams_dir = os.path.join(BASE_DIR, "ExtractFrams")
+    extract_frams_dir = os.path.join(BASE_DIR, dataset_folder, "ExtractFrams")
     all_video_folders = sorted([d for d in os.listdir(extract_frams_dir) 
                            if os.path.isdir(os.path.join(extract_frams_dir, d))])
 
     # Get already processed videos
-    processed_videos = get_processed_videos()
+    processed_videos = get_processed_videos(dataset_folder)
     log.info(f"Found {len(processed_videos)} already processed videos")
     
     # Skip already processed videos (except last 9 which might be incomplete)
@@ -263,12 +288,18 @@ if __name__ == '__main__':
     log.info(f"To process: {len(video_folders)}")
     log.info(f"Using {num_workers} parallel workers")
     log.info(f"GPU acceleration: ENABLED (CUDA)")
-    log.info(f"Results will be saved to: {os.path.join(BASE_DIR, 'Result.xlsx')}")
+    result_file = os.path.join(BASE_DIR, dataset_folder, 'Result.xlsx')
+    log.info(f"Results will be saved to: {result_file}")
     log.info("=" * 60)
     
     # Load Excel workbook
-    book = openpyxl.load_workbook(os.path.join(BASE_DIR, 'Result.xlsx'))
-    sheet = book.active
+    if not os.path.exists(result_file):
+        book = openpyxl.Workbook()
+        sheet = book.active
+        book.save(result_file)
+    else:
+        book = openpyxl.load_workbook(result_file)
+        sheet = book.active
     
     # Find next empty row
     sheetCount = 1
@@ -289,7 +320,8 @@ if __name__ == '__main__':
     
     with Pool(processes=num_workers) as pool:
         # Use imap_unordered to get results as they complete
-        for i, result in enumerate(pool.imap_unordered(process_single_video, video_folders), 1):
+        video_args = [(v, dataset_folder) for v in video_folders]
+        for i, result in enumerate(pool.imap_unordered(process_single_video, video_args), 1):
             if result['success']:
                 completed_count += 1
                 video_name = result['video_name']
@@ -319,7 +351,7 @@ if __name__ == '__main__':
             
             # Save Excel and show progress every 3 videos (regardless of success/failure)
             if i % 4 == 0:
-                book.save(os.path.join(BASE_DIR, "Result.xlsx"))
+                book.save(result_file)
                 elapsed_total = timer() - overall_start
                 videos_per_hour = (i / elapsed_total) * 3600 if elapsed_total > 0 else 0
                 remaining = total_videos - i
@@ -329,7 +361,7 @@ if __name__ == '__main__':
     overall_end = timer()
     
     # Final save
-    book.save(os.path.join(BASE_DIR, "Result.xlsx"))
+    book.save(result_file)
     
     total_time = int(overall_end - overall_start)
     
@@ -342,8 +374,13 @@ if __name__ == '__main__':
     log.info(f"Total time: {total_time}s ({total_time/60:.1f} minutes)")
     if total_time > 0:
         log.info(f"Average speed: {total_videos/total_time*60:.1f} videos/hour")
-    log.info(f"Results saved to: {os.path.join(BASE_DIR, 'Result.xlsx')}")
-    log.info(f"Cropped images saved to: {os.path.join(BASE_DIR, 'CroppedMouth')}")
+    log.info(f"Results saved to: {result_file}")
+    # Show correct output path based on dataset
+    if dataset_folder == "UADFV":
+        output_path = os.path.join(BASE_DIR, dataset_folder, "CroppedMouth")
+    else:
+        output_path = os.path.join(BASE_DIR, "CroppedMouth", dataset_folder)
+    log.info(f"Cropped images saved to: {output_path}")
     log.info("=" * 60)
     
     # Performance summary
