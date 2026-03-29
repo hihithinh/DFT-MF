@@ -1,6 +1,8 @@
-# Deepfake Detection Pipeline
+# DFT-MF: Phát hiện Deepfake bằng Phân tích Đặc trưng Vùng Miệng
 
-## 📁 Project Structure
+Hệ thống phát hiện video deepfake sử dụng CNN và phân tích vùng miệng mở.
+
+## 📁 Cấu trúc Thư mục
 
 ```
 DFT-MF/
@@ -51,181 +53,77 @@ DFT-MF/
 └── venv_windows/            # Virtual environment
 ```
 
-## 🚀 Pipeline Steps
+## 🚀 Pipeline - Các Bước Chạy
 
-### **Step 0: Extract Frames from Videos**
+### **Bước 0: Trích xuất Frame từ Video**
 ```bash
-# For UADFV dataset
-python extract_frames.py UADFV
-
-# For CelebDF dataset (default)
-python extract_frames.py CelebDF
-python extract_frames.py  # Uses CelebDF by default
-
-# With custom video directory
-python extract_frames.py UADFV --video-dir D:\Videos\UADFV
+python extract_frames.py CelebDF      # Mặc định CelebDF
+python extract_frames.py UADFV        # Hoặc UADFV
 ```
-- Input: Video files in `{dataset}/Videos/*.mp4`
-- Output: `{dataset}/ExtractFrams/{video_name}/image_*.jpg`
-- Supported formats: .mp4, .avi, .mov, .mkv
-- Features: Automatic video detection, progress tracking, frame counting
 
-### **Step 1: Crop Open Mouth (GPU-Accelerated)**
+### **Bước 1: Crop Vùng Miệng Mở**
 ```bash
-# For UADFV dataset
-python crop_open_mouth_gpu.py UADFV
-
-# For CelebDF dataset (default)
 python crop_open_mouth_gpu.py CelebDF
-python crop_open_mouth_gpu.py  # Uses CelebDF by default
+python crop_open_mouth_gpu.py UADFV
 ```
-- Input: `{dataset}/ExtractFrams/{video_name}/image_*.jpg`
-- Output: 
-  - UADFV: `UADFV/CroppedMouth/{video_name}/Real*.jpg`
-  - CelebDF: `CroppedMouth/CelebDF/{video_name}/Real*.jpg`
-- Requires: `shape_predictor_68_face_landmarks.dat`
-- Features: GPU acceleration, parallel processing, progress tracking
 
-### **Step 2: Train CNN Model**
+### **Bước 2: Huấn luyện Mô hình CNN**
 ```bash
-# For UADFV dataset
-python train_cnn_generator.py UADFV
-
-# For CelebDF dataset (default)
 python train_cnn_generator.py CelebDF
-python train_cnn_generator.py  # Uses CelebDF by default
+python train_cnn_generator.py UADFV
 ```
-- Input: Preprocessed training data
-- Output: `trained_models/CNN_{dataset}_YYYYMMDD_HHMMSS_final.h5`
-- Features: GPU acceleration, TensorBoard logging, checkpoint saving
 
-### **Step 3: Deepfake Detection**
+### **Bước 3: Phát hiện Deepfake**
 ```bash
-# For UADFV dataset
-python detect_deepfake.py UADFV
-
-# For CelebDF dataset (default)
 python detect_deepfake.py CelebDF
-python detect_deepfake.py  # Uses CelebDF by default
-
-# With specific model
-python detect_deepfake.py UADFV --model trained_models/CNN_UADFV_20260328_103000_final.h5
+python detect_deepfake.py UADFV
 ```
-- Input: Cropped mouth images from Step 1
-- Output: `{dataset}/Result.xlsx`
-- Features: Automatic model selection, batch processing
 
-## 📦 Required Files
+**Output**: Kết quả lưu trong `{dataset}/Result.xlsx`
 
-### **Download:**
+## 📦 Cài đặt
+
+### **Tải File Cần thiết:**
 1. **shape_predictor_68_face_landmarks.dat**
-   - Link: http://dlib.net/files/shape_predictor_68_face_landmarks.dat
-   - Place in: Project root directory
+   - Link: https://github.com/ageitgey/face_recognition_models/blob/master/face_recognition_models/models/shape_predictor_68_face_landmarks.dat
+   - Đặt tại: Thư mục gốc dự án
 
-### **Input Data:**
-- **UADFV**: Place dataset in `dataset/UADFV/` with `fake/` and `real/` subfolders containing videos
-- **CelebDF**: Place videos in `CelebDF/Videos/`
+### **Chuẩn bị Dữ liệu:**
+- **UADFV**: Đặt trong `dataset/UADFV/` với thư mục `fake/` và `real/`
+- **CelebDF**: Đặt video trong `CelebDF/`
 
-## ⚙️ Configuration
-
-### **Environment Setup:**
-```powershell
-# Use virtual environment
-D:\Hoc\Study\computer-vision\DFT-MF\venv_windows\Scripts\python.exe
-
-# Or use the PowerShell script
-.\run_gpu.ps1
-```
-
-### **Dataset Structure:**
-- **UADFV**: Keeps original structure `UADFV/CroppedMouth/video_name/`
-- **CelebDF**: Uses new structure `CroppedMouth/CelebDF/video_name/`
-- **Models**: Saved with dataset prefixes in `trained_models/`
-
-## 🎯 Usage
-
-### **Complete Pipeline for UADFV:**
-1. Place dataset in `dataset/UADFV/` with `fake/` and `real/` folders
-2. Download dlib model to project root
-3. Extract: `python extract_frames.py UADFV`
-4. Crop: `python crop_open_mouth_gpu.py UADFV`
-5. Train: `python train_cnn_generator.py UADFV`
-6. Detect: `python detect_deepfake.py UADFV`
-7. Check results in `UADFV/Result.xlsx`
-
-### **Complete Pipeline for CelebDF:**
-1. Place videos in `CelebDF/Videos/`
-2. Download dlib model to project root
-3. Extract: `python extract_frames.py CelebDF`
-4. Crop: `python crop_open_mouth_gpu.py CelebDF`
-5. Train: `python train_cnn_generator.py CelebDF`
-6. Detect: `python detect_deepfake.py CelebDF`
-7. Check results in `CelebDF/Result.xlsx`
-
-## 📊 Output Format
-
-**Result.xlsx** contains:
-- Open mouth frame counts and processing times
-- Real/Fake image counts per video
-- Final video classification
-- Performance metrics
-- GPU acceleration statistics
-
-## 🔧 Dependencies
-
+### **Cài đặt Dependencies:**
 ```bash
 pip install -r requirements.txt
 ```
 
-Main packages:
-- OpenCV (video/image processing)
-- TensorFlow (CNN model)
-- dlib (face landmarks)
-- imutils (image utilities)
-- openpyxl (Excel output)
-- numpy (numerical operations)
-- scipy (spatial calculations)
+## 📊 Kết quả Mô hình
 
-## 🎯 Key Features
+Mô hình được huấn luyện trên hai dataset UADFV và CelebDF với các chỉ số hiệu suất sau:
 
-### **GPU Acceleration:**
-- CUDA support for dlib face detection
-- TensorFlow GPU training and inference
-- Automatic GPU detection and configuration
+### **Quá trình Huấn luyện**
+![Biểu đồ so sánh quá trình huấn luyện](materials/training_comparison.png)
 
-### **Multi-Dataset Support:**
-- Separate processing for UADFV and CelebDF datasets
-- Dataset-specific model naming
-- Automatic model selection based on dataset
+Mô hình hội tụ nhanh trên cả hai tập dữ liệu, đạt trên 98% accuracy trên tập huấn luyện sau 8-10 epoch. Validation accuracy đạt ~76% (UADFV) và ~82% (CelebDF), cho thấy mô hình có dấu hiệu overfitting nhẹ.
 
-### **Performance Optimizations:**
-- Parallel processing with multiprocessing
-- Progress tracking and ETA calculation
-- Batch processing for large datasets
-- Memory-efficient data loading
+### **Kết quả Kiểm thử**
+![So sánh kết quả test](materials/test_results_comparison.png)
 
-### **Error Handling:**
-- Robust error handling for corrupt files
-- Automatic retry mechanisms
-- Detailed logging and progress reporting
+| Dataset | Accuracy | Precision | Recall | F1-Score |
+|---------|----------|-----------|--------|----------|
+| **UADFV** | **80.26%** | 78.16% | 85.25% | 81.55% |
+| **CelebDF** | **81.97%** | 83.80% | 89.79% | 86.69% |
 
-## 🎯 Notes
+Mô hình đạt hiệu suất tốt trên cả hai tập dữ liệu, với recall cao (>85%) cho thấy khả năng phát hiện deepfake tốt. Chi tiết về phương pháp và kết quả xem tại [Báo cáo Thực nghiệm](materials/experiment-report.md).
 
-- **UADFV**: Maintains original folder structure for compatibility
-- **CelebDF**: Uses optimized folder structure for better organization
-- **Models**: Automatically saved with dataset prefixes and timestamps
-- **GPU**: Requires CUDA-compatible GPU for optimal performance
-- **Virtual Environment**: Recommended for dependency isolation
-- **Backward Compatibility**: All scripts work with default CelebDF dataset
+## 🎨 Demo Web
 
-## 🔄 Migration
+Giao diện web tương tác cho phép upload video và xem kết quả phân tích real-time.
 
-For existing UADFV users:
-- No changes needed - structure remains the same
-- Models will be saved with new naming convention
-- All existing functionality preserved
+**Tính năng:**
+- Upload video và xem tiến độ xử lý từng bước
+- Hiển thị kết quả phân tích real-time (Timeline, Phân bố Confidence)
+- Giao diện hiện đại với Glassmorphism design
 
-For CelebDF users:
-- Move existing `CroppedMouth/video*` folders to `CroppedMouth/CelebDF/`
-- Move `ExtractFrams/` and `Result.xlsx` to `CelebDF/` folder
-- Re-train models for new dataset-specific naming
+**Cài đặt và Chạy:**
+Xem chi tiết tại [Demo README](demo/README.md)

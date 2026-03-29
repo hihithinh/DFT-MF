@@ -31,9 +31,13 @@ logs/
 Thumbs.db
 
 # Training data
-ExtractFrams/
-CroppedMouth/
+CelebDF/ExtractFrams/
+CelebDF/CroppedMouth/
 Videos/
+logs/
+training_logs/
+paper/
+materials/
 
 # Model files
 64x3-CNN*.model
@@ -41,7 +45,7 @@ X.pickle
 y.pickle
 
 # Dataset directories
-dataset/Celeb-DF/
+dataset/
 CelebDF_ForTraining/
 
 # Temporary files

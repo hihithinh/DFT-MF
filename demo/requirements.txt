@@ -1,0 +1,11 @@
+Flask>=3.0.0
+Flask-CORS>=4.0.0
+python-dotenv>=1.0.0
+opencv-python>=4.8.1.78
+face_recognition>=1.3.0
+numpy>=1.24.3
+tensorflow>=2.21.0
+Werkzeug>=3.0.1
+dlib>=19.24.0
+psutil>=5.9.0
+h5py>=3.10.0

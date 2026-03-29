@@ -14,7 +14,7 @@ def prepare_dataset(dataset_name, img_size=50):
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     
     # Determine CroppedMouth directory based on dataset
-    cropped_mouth_dir = os.path.join(BASE_DIR, dataset_name, "CroppedMouth")
+    cropped_mouth_dir = os.path.join(BASE_DIR, dataset_name, "CelebDF/CroppedMouth")
     
     # Create dataset-specific preprocessed data directory
     output_dir = os.path.join(BASE_DIR, dataset_name, "preprocessed_data")

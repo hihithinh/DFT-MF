@@ -98,10 +98,10 @@ def process_single_video(args_tuple):
         model_time = timer() - model_start
         start = timer()
         
-        faces_folder_path = os.path.join(BASE_DIR, dataset_folder, "ExtractFrams", video_name)
+        faces_folder_path = os.path.join(BASE_DIR, dataset_folder, "CelebDF/ExtractFrams", video_name)
         
         # Different folder structure for different datasets
-        mouth_dir = os.path.join(BASE_DIR, dataset_folder, "CroppedMouth", video_name)
+        mouth_dir = os.path.join(BASE_DIR, dataset_folder, "CelebDF/CroppedMouth", video_name)
         
         os.makedirs(mouth_dir, exist_ok=True)
         imagesFolder = mouth_dir
@@ -252,16 +252,16 @@ if __name__ == '__main__':
     log.info(f"Dataset: {dataset_folder}")
     log.info(f"Working directory: {os.path.join(BASE_DIR, dataset_folder)}")
     
-    os.makedirs(os.path.join(BASE_DIR, dataset_folder, "ExtractFrams"), exist_ok=True)
+    os.makedirs(os.path.join(BASE_DIR, dataset_folder, "CelebDF/ExtractFrams"), exist_ok=True)
     
     # Create CroppedMouth directory based on dataset
     if dataset_folder == "UADFV":
-        os.makedirs(os.path.join(BASE_DIR, dataset_folder, "CroppedMouth"), exist_ok=True)
+        os.makedirs(os.path.join(BASE_DIR, dataset_folder, "CelebDF/CroppedMouth"), exist_ok=True)
     else:
-        os.makedirs(os.path.join(BASE_DIR, "CroppedMouth", dataset_folder), exist_ok=True)
+        os.makedirs(os.path.join(BASE_DIR, "CelebDF/CroppedMouth", dataset_folder), exist_ok=True)
     
     # Get all video folders
-    extract_frams_dir = os.path.join(BASE_DIR, dataset_folder, "ExtractFrams")
+    extract_frams_dir = os.path.join(BASE_DIR, dataset_folder, "CelebDF/ExtractFrams")
     all_video_folders = sorted([d for d in os.listdir(extract_frams_dir) 
                            if os.path.isdir(os.path.join(extract_frams_dir, d))])
 
@@ -377,9 +377,9 @@ if __name__ == '__main__':
     log.info(f"Results saved to: {result_file}")
     # Show correct output path based on dataset
     if dataset_folder == "UADFV":
-        output_path = os.path.join(BASE_DIR, dataset_folder, "CroppedMouth")
+        output_path = os.path.join(BASE_DIR, dataset_folder, "CelebDF/CroppedMouth")
     else:
-        output_path = os.path.join(BASE_DIR, "CroppedMouth", dataset_folder)
+        output_path = os.path.join(BASE_DIR, "CelebDF/CroppedMouth", dataset_folder)
     log.info(f"Cropped images saved to: {output_path}")
     log.info("=" * 60)
     

@@ -41,7 +41,7 @@ if __name__ == '__main__':
             # CelebDF uses Videos/ folder
             video_dir = os.path.join(BASE_DIR, dataset_name, "Videos")
     
-    extract_dir = os.path.join(BASE_DIR, dataset_name, "ExtractFrams")
+    extract_dir = os.path.join(BASE_DIR, dataset_name, "CelebDF/ExtractFrams")
     result_file = os.path.join(BASE_DIR, dataset_name, "Result.xlsx")
     
     log.info(f"Video directory: {video_dir}")

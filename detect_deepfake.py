@@ -54,10 +54,10 @@ sheetCount=1
 # Get all video folders from CroppedMouth (different structure for each dataset)
 if dataset_name == "UADFV":
     # UADFV: UADFV/CroppedMouth/video_name/
-    cropped_mouth_dir = os.path.join(BASE_DIR, dataset_name, "CroppedMouth")
+    cropped_mouth_dir = os.path.join(BASE_DIR, dataset_name, "CelebDF/CroppedMouth")
 else:
     # CelebDF: CroppedMouth/CelebDF/video_name/
-    cropped_mouth_dir = os.path.join(BASE_DIR, "CroppedMouth", dataset_name)
+    cropped_mouth_dir = os.path.join(BASE_DIR, "CelebDF/CroppedMouth", dataset_name)
 
 if not os.path.exists(cropped_mouth_dir):
     print(f"CroppedMouth directory not found: {cropped_mouth_dir}")
@@ -81,10 +81,10 @@ while(y <= len(video_folders)):
     # Different path structure for different datasets
     if dataset_name == "UADFV":
         # UADFV: UADFV/CroppedMouth/video_name/
-        faces_folder_path = os.path.join(BASE_DIR, dataset_name, "CroppedMouth", video_name)
+        faces_folder_path = os.path.join(BASE_DIR, dataset_name, "CelebDF/CroppedMouth", video_name)
     else:
         # CelebDF: CroppedMouth/CelebDF/video_name/
-        faces_folder_path = os.path.join(BASE_DIR, "CroppedMouth", dataset_name, video_name)
+        faces_folder_path = os.path.join(BASE_DIR, "CelebDF/CroppedMouth", dataset_name, video_name)
     numberImage=len(glob.glob(os.path.join(faces_folder_path, "*.jpg")))
     print("Total number of Images in RF "+str(int(y))+ "=  "+ str(int(numberImage))) 
     i=0
