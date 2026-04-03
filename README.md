@@ -45,8 +45,9 @@ DFT-MF/
 ├── shape_predictor_68_face_landmarks.dat
 ├── extract_frames.py        # Step 0: Extract frames
 ├── crop_open_mouth_gpu.py   # Step 1: Crop mouth regions
-├── train_cnn_generator.py   # Step 2: Train CNN model
-├── detect_deepfake.py       # Step 3: Detect deepfakes
+├── prepare_data.py          # Step 2: Prepare dataset
+├── train_cnn_generator.py   # Step 3: Train CNN model
+├── detect_deepfake.py       # Step 4: Detect deepfakes
 ├── split_video_by_keyword.py # Optional: Video splitting
 ├── run_gpu.ps1             # PowerShell script
 ├── requirements.txt         # Dependencies
@@ -67,13 +68,20 @@ python crop_open_mouth_gpu.py CelebDF
 python crop_open_mouth_gpu.py UADFV
 ```
 
-### **Bước 2: Huấn luyện Mô hình CNN**
+### **Bước 2: Chuẩn bị Dataset**
+```bash
+python prepare_data.py CelebDF
+python prepare_data.py UADFV
+```
+**Output**: Tạo file pickle trong `{dataset}/preprocessed_data/` (X_train, X_val, X_test, y_train, y_val, y_test)
+
+### **Bước 3: Huấn luyện Mô hình CNN**
 ```bash
 python train_cnn_generator.py CelebDF
 python train_cnn_generator.py UADFV
 ```
 
-### **Bước 3: Phát hiện Deepfake**
+### **Bước 4: Phát hiện Deepfake**
 ```bash
 python detect_deepfake.py CelebDF
 python detect_deepfake.py UADFV
@@ -114,7 +122,7 @@ Mô hình hội tụ nhanh trên cả hai tập dữ liệu, đạt trên 98% ac
 | **UADFV** | **80.26%** | 78.16% | 85.25% | 81.55% |
 | **CelebDF** | **81.97%** | 83.80% | 89.79% | 86.69% |
 
-Mô hình đạt hiệu suất tốt trên cả hai tập dữ liệu, với recall cao (>85%) cho thấy khả năng phát hiện deepfake tốt. Chi tiết về phương pháp và kết quả xem tại [Báo cáo Thực nghiệm](materials/experiment-report.md).
+Mô hình đạt hiệu suất tốt trên cả hai tập dữ liệu, với recall cao (>85%) cho thấy khả năng phát hiện deepfake tốt. Chi tiết về phương pháp và kết quả xem tại [Báo cáo Thực nghiệm](https://drive.google.com/drive/folders/14BHx_4sf3s0D_xtUs1nbqP_YtXnRN4Zh).
 
 ## 🎨 Demo Web
 

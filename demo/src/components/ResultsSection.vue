@@ -87,7 +87,7 @@
           <span class="material-symbols-outlined text-secondary text-sm">warning</span>
         </div>
         <p class="font-headline text-lg font-bold" :class="results?.predictions?.verdict === 'FAKE' ? 'text-error' : results?.predictions?.verdict === 'REAL' ? 'text-tertiary' : 'text-outline'">
-          {{ results?.predictions?.fake_percentage || '--' }}% <span class="text-xs font-normal text-outline">({{ results?.predictions?.fake_count || '--' }} frames)</span>
+          {{ results?.predictions?.fake_percentage === 0 ? 0 : (results?.predictions?.fake_percentage || '--') }}% <span class="text-xs font-normal text-outline">({{ results?.predictions?.fake_count === 0 ? 0 : (results?.predictions?.fake_count || '--') }} frames)</span>
         </p>
       </div>
       <div class="bg-surface-container p-6 rounded border border-outline-variant/10">
